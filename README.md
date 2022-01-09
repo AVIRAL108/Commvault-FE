@@ -1,7 +1,5 @@
 ### CRUD UI
 
-### CRUD UI
-
 ##### Installation
 
 ```

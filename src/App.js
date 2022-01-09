@@ -1,19 +1,17 @@
 import { Container, Paper } from "@mui/material";
 import _ from "lodash";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import MiniDrawer from "./components/common/Surfaces/MinDrawer";
 import { MainRoute } from "./components/Core/Navigation/MainRoute";
-import { cruds } from "./constants/crud";
-import { setConfig } from "./utils.js";
+import { cruds, defaultRoute } from "./constants/crud";
 const App = () => {
-  setConfig();
   return (
     <>
-      <MiniDrawer show={0} list={cruds}>
+      <MiniDrawer show={1} list={cruds}>
         <Container component="main" maxWidth="md" sx={{ mb: 0 }}>
           <Paper variant="outlined" sx={{ my: { xs: 2, md: 4 }, p: { xs: 2, md: 2 } }}>
             <Switch>
-              <Route exact path="/" component={() => <h1> Unauthorised </h1>}  />
+              <Route exact path="/" component={() => <Redirect to={defaultRoute} />}  />
               {
                 _.map((cruds), (v) => {
                   return v.child ? _.map(v.child, (data) => {

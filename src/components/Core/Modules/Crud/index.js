@@ -3,7 +3,19 @@ import { Route, Redirect, Switch } from "react-router-dom";
 import Create from "./Create";
 import Edit from "./Edit";
 import List from "./List";
-const Crud = ({ name, title, columns, list, create, edit, formFields, filters }) => {
+import View from "./View";
+const Crud = ({
+  name,
+  title,
+  columns,
+  list,
+  create,
+  edit,
+  formFields,
+  filters,
+  remove,
+  jobConfig
+}) => {
   return (
     <Switch>
       <Route
@@ -14,7 +26,15 @@ const Crud = ({ name, title, columns, list, create, edit, formFields, filters })
       <Route
         exact
         path={`/${name}/list`}
-        component={() => <List name={name} filters={filters} title={title} list={list} columns={columns} />}
+        component={() => (
+          <List
+            name={name}
+            filters={filters}
+            title={title}
+            list={list}
+            columns={columns}
+          />
+        )}
       />
       <Route
         path={`/${name}/create`}
@@ -37,6 +57,21 @@ const Crud = ({ name, title, columns, list, create, edit, formFields, filters })
             name={name}
             config={edit}
             title={title}
+          />
+        )}
+      />
+      <Route
+        exact
+        path={`/${name}/view/:id`}
+        component={(location) => (
+          <View
+            formFields={formFields}
+            location={location}
+            name={name}
+            config={edit}
+            title={title}
+            deleteConfig  ={remove}
+            jobConfig ={ jobConfig }
           />
         )}
       />

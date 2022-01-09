@@ -1,4 +1,4 @@
-import { Add, Lock } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import { Button, Typography, Grid } from "@mui/material";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
@@ -8,9 +8,6 @@ import history from "../../../../history";
 import SnackBar from "../../../common/Feedbacks/SnackBar";
 import { DataGrid } from "@mui/x-data-grid";
 import { Box } from "@mui/system";
-import { getConfig, serialize } from "../../../../utils.js";
-import BasicPopover from "../../../common/Feedbacks/Popper";
-import { store } from "../../../../redux/store";
 
 const List = ({ name, columns, list, title, filters }) => {
   const dispatch = useDispatch();
@@ -21,7 +18,6 @@ const List = ({ name, columns, list, title, filters }) => {
   const routerStateSeverity = routerState?.severity;
   const values = useSelector((state) => state["crud"][name]);
   const [open, setOpen] = useState(routerStateOpen);
-  const [filter, setFilter] = useState("");
   const [data, setData] = useState({
     loading: true,
     rows: [],
@@ -44,31 +40,20 @@ const List = ({ name, columns, list, title, filters }) => {
         list.config,
         list.method,
         list.type,
-        `${list.uri}?&limit=${data.pageSize}&offset=${
-          _.values(values?.rowCount) - data.pageSize <=
-          (data.page - 1) * data.pageSize
-            ? (data.page - 1) * data.pageSize
-            : _.values(values?.rowCount) - data.pageSize
-        }${ filter ? '&' : '' }${serialize(filter)}`,
+        `${list.uri}?&_start=${
+            _.values(values?.rowCount) - data.pageSize <=
+            (data.page - 1) * data.pageSize
+              ? (data.page - 1) * data.pageSize
+              : _.values(values?.rowCount) - data.pageSize
+           }&_end=${data.pageSize * data.page}`,
         name
       )
-    ).then(() => {
-      const error = store.getState().error;
-      if (error?.message) {
-        setErr((prev) => ({
-          ...prev,
-          open: true,
-          ...error,
-        }));
-      }
-    });
+    )
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     data.page,
     data.pageSize,
     dispatch,
-    filter,
-    list,
     name,
   ]);
   useEffect(() => {
@@ -85,27 +70,19 @@ const List = ({ name, columns, list, title, filters }) => {
 
     window.history.replaceState(`/${name}`, {});
   }, [name, data.page, data.pageSize, values]);
-    const configs = serialize(getConfig('config'));
-  const authSuccess = (
-    <div>
-      <Grid container>
+   return <>  <Grid container>
         <Grid item container xs={7}>
           <Typography variant="h6" component="h2" color="primary">
             {title}
           </Typography>
         </Grid>
         <Grid item container justifyContent="flex-end" xs={5}>
-          <BasicPopover
-            values={filter}
-            filters={filters}
-            onSubmit={(data) => setFilter(data)}
-            onReset={() =>  setFilter('')  }
-          />
+  
           <Button
             variant="contained"
             color="secondary"
             startIcon={<Add />}
-            onClick={() => history.push(`/${name}/create?${configs}`)}
+            onClick={() => history.push(`/${name}/create`)}
           >
             Create
           </Button>
@@ -142,27 +119,7 @@ const List = ({ name, columns, list, title, filters }) => {
         severity={routerStateSeverity || "error"}
         time={6000}
       />
-    </div>
-  );
-  const authFailed = (
-    <Grid container>
-      <Lock color="primary" fontSize="large" />
-      <Typography variant="h4">Access Denied </Typography>
-      <Grid item xs={12}>
-        <Typography style={{ color: "#808080" }} variant="p">
-          {err.message}{" "}
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Typography style={{ color: "#808080" }} variant="p">
-          Please{" "}
-          {/* <Link onClick={() => window.top.location.reload()}  to="#" > */}
-          Reload
-          {/* </Link> */}
-        </Typography>
-      </Grid>
-    </Grid>
-  );
-  return err.auth === "failed" ? authFailed : authSuccess;
-};
+      </>
+}
+
 export default List;

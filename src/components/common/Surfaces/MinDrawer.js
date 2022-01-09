@@ -122,7 +122,7 @@ export default function MiniDrawer(props) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap component="div">
-                        Aakash + Byjus
+                        CommVault
                     </Typography>
                 </Toolbar>
             </AppBar>
