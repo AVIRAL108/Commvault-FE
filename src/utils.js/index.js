@@ -1,21 +1,4 @@
 import _ from "lodash";
-
-export const setConfig = () => {
-  let params = window.location.search;
-  params = params.slice(1);
-  let obj = new URLSearchParams(params);
-  let values = {
-    token: obj.get("token"),
-    uid: obj.get("uid"),
-  };
-  return sessionStorage.setItem("config", JSON.stringify(values));
-};
-
-export const getConfig = (name) => {
-  const values = JSON.parse(sessionStorage.getItem(name));
-  return values;
-};
-
 export const serialize = (obj) => {
   const pureObj = _.omitBy(
     obj,
@@ -53,3 +36,9 @@ export const convertIntObj = (obj, formfeilds, boolean) => {
   }
   return res;
 };
+
+export const serverTimeConversion  = (serverTime) =>  {
+  const date  =  new Date(serverTime*1000);
+  return date.toDateString() + " "  +date.toLocaleTimeString()
+ 
+}

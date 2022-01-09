@@ -1,11 +1,11 @@
 import _ from "lodash";
-import { GET_PERCENTAGES, POST_PERCENTAGE } from "../constants/keys";
+import { GET_DATA, POST_DATA } from "../constants/keys";
 const crudReducer = (state = {}, action) => {
     switch (action.type) {
-        case POST_PERCENTAGE:
+        case POST_DATA:
             return state
-        case GET_PERCENTAGES:
-             return { ...state,  [action.name] : { rowCount  : action.payload.data.rowcount, list  :   _.mapKeys(action.payload.data.list, "id") }}
+        case GET_DATA:
+             return { ...state,  [action.name] : { rowCount  : parseInt(action.payload?.rowsCount), list  :   _.mapKeys(action.payload.list, "id") }}
         default:
             return state;
     }

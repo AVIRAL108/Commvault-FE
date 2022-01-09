@@ -4,11 +4,8 @@ import { Box } from "@mui/system";
 import _ from "lodash";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { fileAdd } from "../../../redux/actions/fileupload";
 
-let CrudForm = ({ onSubmit, formFields, edit, values }) => {
-  const dispatch =  useDispatch();
+let CrudForm = ({ onSubmit, formFields, edit, values, view }) => {
   const {
     handleSubmit,
     control,
@@ -18,13 +15,9 @@ let CrudForm = ({ onSubmit, formFields, edit, values }) => {
   useEffect(() => {
     if (edit) {
       const s = _.flatten(formFields);
-      s.forEach((field) =>  field.type !== "file" ? setValue(field.name,  values[field.name] ) : undefined );
-       const files = s.filter((item) =>  item.type === "file");
-       const fileObj  = {}
-       files.forEach((file) => Object.assign( fileObj ,  { [file.name] : values[file.name] } ) );
-       dispatch(fileAdd(fileObj))
+      s.forEach((field) =>   setValue(field.name,  values[field.name] ) );
     }
-  }, [values, formFields, setValue, edit, dispatch]);
+  }, [values, formFields, setValue, edit]);
   return (
     <>
       <Box
@@ -38,7 +31,7 @@ let CrudForm = ({ onSubmit, formFields, edit, values }) => {
               _.map(v, (p) => {
                 return (
                   <Grid key={p.name} item xs={12} sm={12 / _.size(v)}>
-                    <Controller
+                 <Controller
                       name={p.name}
                       defaultValue={p.defaultValue}
                       control={control}
@@ -56,7 +49,7 @@ let CrudForm = ({ onSubmit, formFields, edit, values }) => {
                           lotties = { p.lottie }
                         />
                       )}
-                    />
+                    /> 
                   </Grid>
                 );
               })

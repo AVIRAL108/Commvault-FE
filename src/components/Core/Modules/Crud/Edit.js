@@ -5,49 +5,45 @@ import { useDispatch, useSelector } from "react-redux";
 import history from "../../../../history";
 import { postData } from "../../../../redux/actions";
 import { clearError } from "../../../../redux/actions/error";
-import { fileRemove } from "../../../../redux/actions/fileupload";
 import { store } from "../../../../redux/store";
-import { convertIntObj } from "../../../../utils.js";
 import SnackBar from "../../../common/Feedbacks/SnackBar";
 import CrudForm from "../../../common/Views/CrudForm";
 
 const Edit = (props) => {
   const { location, name, title, formFields, config } = props;
-  const dispatch  =  useDispatch();
-  const [ err, setErr ] =  useState({  open : false ,  message : ""});
-  const handleClose  = () => { 
-      return setErr((prev) => ({
-        ...prev,
-        open :  false
-      }))
-  }
+  const dispatch = useDispatch();
+  const [err, setErr] = useState({ open: false, message: "" });
+  const handleClose = () => {
+    return setErr((prev) => ({
+      ...prev,
+      open: false,
+    }));
+  };
   const data = useSelector(
-    (state) => state.crud[name]['list'][location.match.params.id]
+    (state) => state.crud[name]["list"][location.match.params.id]
   );
-  const files = useSelector((state) => state.files);
-  useEffect(() => { 
-    return () =>  dispatch(clearError())
-  }, [dispatch])
+  useEffect(() => {
+    return () => dispatch(clearError());
+  }, [dispatch]);
   const onSubmit = (values) => {
-   dispatch(postData(
-      config.config,
-      config.method,
-      config.type,
-      config.uri,
-      config.isFormData,
-      parseInt(location.match.params.id),
-      { ...convertIntObj(values, formFields, true) , ...files, modified_by :  1, created_by  :  1}
-    )
-   ).then(() => {
-       const error  =  store.getState().error;
-       if(error?.message) { 
-       return  setErr((prev) => ({ 
-           ...prev,
-           open  :  true,
-           message :  error.message
-         }))
-       }
-       else { 
+    dispatch(
+      postData(
+        config.config,
+        config.method,
+        config.type,
+        config.uri,
+        parseInt(location.match.params.id),
+        values
+      )
+    ).then(() => {
+      const error = store.getState().error;
+      if (error?.message) {
+        return setErr((prev) => ({
+          ...prev,
+          open: true,
+          message: error.message,
+        }));
+      } else {
         return history.push({
           pathname: `/${name}/list`,
           state: {
@@ -56,15 +52,14 @@ const Edit = (props) => {
             message: `Successfully Updated`,
           },
         });
-       }
-   })
-   
-   
-}
-useEffect(() => { 
- return  () =>  dispatch(fileRemove());
-
-},[dispatch])
+      }
+    });
+  };
+  useEffect(() => {
+    return () => {
+      dispatch(clearError());
+    };
+  }, [dispatch]);
   return (
     <div>
       <Typography sx={{ pb: 3 }} component="h2" variant="h5" align="left">
@@ -84,8 +79,13 @@ useEffect(() => {
         create={config}
         onSubmit={onSubmit}
       />
-               <SnackBar handleClose={handleClose} severity="error" time={7000} open={err.open} message={err.message} />
-
+      <SnackBar
+        handleClose={handleClose}
+        severity="error"
+        time={7000}
+        open={err.open}
+        message={err.message}
+      />
     </div>
   );
 };

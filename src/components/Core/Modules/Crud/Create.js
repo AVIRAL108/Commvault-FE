@@ -2,18 +2,15 @@ import React, { useEffect, useState } from "react";
 import { IconButton, Typography } from "@mui/material";
 import CrudForm from "../../../common/Views/CrudForm";
 import { ArrowBack } from "@mui/icons-material";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { postData } from "../../../../redux/actions";
 import history from "../../../../history";
-import { convertIntObj } from "../../../../utils.js";
-import { fileRemove } from "../../../../redux/actions/fileupload";
 import { store } from "../../../../redux/store";
 import SnackBar from "../../../common/Feedbacks/SnackBar";
 import { clearError } from "../../../../redux/actions/error";
 
 export default function Create({ name, title, config, formFields }) {
   const dispatch = useDispatch();
-  const files = useSelector((state) => state.files);
   const [ err, setErr ] =  useState({  open : false ,  message : ""});
   const handleClose  = () => { 
     return setErr((prev) => ({
@@ -28,9 +25,8 @@ export default function Create({ name, title, config, formFields }) {
         config.method,
         config.type,
         config.uri,
-        config.isFormData,
         null,
-        { ...convertIntObj(data, formFields, false),   ...files, modified_by :  1, created_by  :  1}
+        data
       )
     ).then(() => {
       const error  =  store.getState().error;
@@ -52,12 +48,11 @@ export default function Create({ name, title, config, formFields }) {
       });
     }
     })
-    .catch((err) => console.log(err)  )
+    .catch((err) =>   { throw err } )
     ;
   };
   useEffect(() => { 
     return  () =>  {
-      dispatch(fileRemove());
       dispatch(clearError());
     }
   

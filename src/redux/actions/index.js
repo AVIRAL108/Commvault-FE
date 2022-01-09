@@ -1,1 +1,1 @@
-export * from './percentage';
+export * from './crud';
